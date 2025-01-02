@@ -40,24 +40,18 @@ Run: make
 
 It prints the responses it gets. Also, it uses assert as specified. 
 
-## Bonus
-The bonus is fully implemented. When you press the Delete button it deletes the message from the current client and no future clients will get that message.
-
 ## favicon.oc file
 I used an open source image that I got from the internet as the favicon. I have attached the file.
 
 # Files folders
 
-I also attached the files folder that was provided. It contains all the files(images,html,..)
+I also attached the files folder. It contains all the files(images,html,..)
 
 
 # Others
 I made the servers to print certain informations to the console to see what's going on behind the scenes.
 
 I also made a class called chat.py that is in a different file.
-
-
-## Thank you!!
 
 
 
