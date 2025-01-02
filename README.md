@@ -59,5 +59,6 @@ This web app can be simulated on localhost.
 # Browser
 Use google chrome. Safari has some issues with the cookies(to be fixed soon). 
 
-
+# Pull Requests
+Feel free to make pull requests
 
