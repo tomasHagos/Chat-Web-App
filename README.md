@@ -53,5 +53,11 @@ I made the servers to print certain informations to the console to see what's go
 
 I also made a class called chat.py that is in a different file.
 
+# Additional Information
+This web app can be simulated on localhost.
+
+# Browser
+Use google chrome.
+
 
 
