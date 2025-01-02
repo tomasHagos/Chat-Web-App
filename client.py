@@ -69,3 +69,4 @@ main()
   # while data != "exit":
     #   data = input("Send a message to the server:")
      #  s.sendall(data.encode('utf-8'))
+     #this will be fixed soon. 
