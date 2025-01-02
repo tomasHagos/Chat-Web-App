@@ -57,7 +57,7 @@ I also made a class called chat.py that is in a different file.
 This web app can be simulated on localhost.
 
 # Browser
-Use google chrome.
+Use google chrome. Safari has some issues with the cookies(to be fixed soon). 
 
 
 
