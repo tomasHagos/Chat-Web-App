@@ -1,0 +1,235 @@
+<html>
+    <head>
+        <script>
+            //to keep track of the messages recieved so far
+            var last_message_id= 0
+            var intervalId;
+            var username;
+            function createTable()
+            {
+                var theDiv = document.getElementById('mainContent');
+                var table = document.createElement('table')
+                table.id = 'messageTable'
+                theDiv.appendChild(table);
+
+                //create the row for the table
+                var headerRow = document.createElement('tr')
+                var headerUsername= document.createElement('th')
+                headerUsername.textContent = 'Username'
+                headerRow.appendChild(headerUsername)
+                var headerMessage = document.createElement('th')
+                headerMessage.textContent = "Message"
+                headerRow.appendChild(headerMessage)
+                table.appendChild(headerRow)
+
+                theDiv.appendChild(table)
+            }
+            function check_login(){
+                var login_request = new XMLHttpRequest()
+                login_request.addEventListener("load",onloadEvent)
+                login_request.open("GET","/api/login")//uses the relative path
+                login_request.withCredentials = true;
+                login_request.send() //content length is automatically set 
+
+                function onloadEvent(){
+                    var theData=JSON.parse(login_request.responseText);
+                    theDiv = document.getElementById("mainContent")
+                    if(theData.status == "logged out"){
+                        theDiv.innerHTML = "<input type = 'text' id='loginInfo'> <button onclick='loggedIn()'>login</button>"
+                    }
+                    else{
+                        let info = theData.username.split("=")
+                        if(info.length > 1){
+                            theDiv.innerHTML =  "<p> Welcome "+info[1]+"!</p> <br>"+sending_messages_html()
+                            username = info[1]
+                        }
+                        else{
+                            theDiv.innerHTML = "<p> Welcome!</p> <br>"+sending_messages_html()
+                            username = 'Guest'
+                        }
+                        start_polling()
+                    }
+                }
+            }
+            function sending_messages_html()
+            {
+                return "<input type='text' id='messagePosting'> <button onclick='send_message()'>Send</button> <br><br> <button onclick='delete_messages()'>Delete Messages</button><br><br> <button onclick='log_out()'>logout</button>"
+            }
+            function loggedIn()
+            {
+                var user_name = document.getElementById("loginInfo").value;
+                if(!user_name){
+                    alert("Username is required!")
+                    return;
+                }
+
+                var login_data =  JSON.stringify({'username':user_name})
+                username = user_name
+                if(!login_data || login_data == {})
+                {
+                    console.error("No valid data to send in the request.");
+                    return;
+                }
+                function loadEventFunction()
+                {
+                    if(request.status == 200){
+                        var theData = JSON.parse(request.responseText);
+                        var theDiv = document.getElementById("mainContent");
+                        theDiv.innerHTML = "<p>"+theData.message+"</p> <br>"+sending_messages_html()
+                        start_polling()
+                     }
+                     else{
+                        var theData = JSON.parse(request.responseText)
+                        var theDiv = document.getElementById("mainContent");
+                        theDiv.innerHTML = "<p>"+theData.error+":"+theData.message+"</p>"
+                     }
+                }
+
+                var request = new XMLHttpRequest();
+                //when the response is ready call this function
+                request.addEventListener("load",loadEventFunction);
+                request.open("POST","/api/login")//uses the relative path
+                request.setRequestHeader("Content-Type","application/json")
+                request.withCredentials = true;
+                request.send(login_data) //content length is automatically set 
+            }
+
+            function start_polling()
+            {
+                intervalId = setInterval(get_new_messages,1000)
+            }
+            function get_new_messages()
+            {
+                function loadEventFunction()
+                {
+                    var theData = JSON.parse(message_request.responseText);
+                    var theDiv = document.getElementById("mainContent");
+                    if(message_request.status == 401){
+                        theDiv.innerHTML = "<p>Logged out! Please login again to proceed.</p>"
+                        //stop the polling as there is no reason to continue.
+                        clearInterval(intervalId)
+                    }
+                    else if(message_request.status == 200){
+
+                        var table = document.getElementById('messageTable');
+                        if(!table){
+                            createTable();
+                            table = document.getElementById('messageTable');
+                        }
+                        var theDiv = document.getElementById("mainContent");
+                    
+
+                        if(theData.length > 0){
+                            
+                            for(let i=0; i < theData.length; i++){
+                                var newRow = document.createElement('tr');
+                                var usernameCell= document.createElement('th');
+                                usernameCell.textContent = theData[i].username
+                                newRow.appendChild(usernameCell)
+                                var messageCell = document.createElement('th')
+                                messageCell.textContent = theData[i].message;
+                                newRow.appendChild(messageCell)
+                                table.appendChild(newRow)
+                                if(theData[i].id > last_message_id){
+                                    last_message_id = theData[i].id
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+                var message_request = new XMLHttpRequest()
+                message_request.addEventListener("load",loadEventFunction)
+                message_request.open("GET","/api/messages?last="+last_message_id)
+                message_request.setRequestHeader("Accept","application/json")
+                message_request.withCredentials = true;
+                message_request.send()
+            }
+
+            function send_message()
+            {
+                var message = document.getElementById("messagePosting").value;
+                if(!message){
+                    alert("Empty message! Please enter something")
+                }
+                else{
+                    var message_sending = new XMLHttpRequest()
+                    message_sending.open("POST","/api/messages")
+                    message_sending.setRequestHeader("Content-Type","application/json")
+                    message_sending.withCredentials = true;
+                    data = JSON.stringify({'username':username,'message':message})
+                    message_sending.send(data)
+                    document.getElementById("messagePosting").value = "";
+                }
+            }
+
+            function log_out()
+            {
+                function log_out_process()
+                {
+                    var theData = JSON.parse(log_out_request.responseText);
+                    var theDiv = document.getElementById("mainContent")
+                    if(log_out_request.status == 200){
+                        theDiv.innerHTML = "<p>"+theData.message+"<p>"
+                        //stop fetching
+                        clearInterval(intervalId)
+                    }
+                }
+                var log_out_request = new XMLHttpRequest()
+                log_out_request.addEventListener("load",log_out_process)
+                log_out_request.open("DELETE","/api/login")
+                log_out_request.withCredentials = true;
+                log_out_request.send()
+                
+            }
+
+            function delete_messages()
+            {
+                
+                function onloadEvent()
+                {
+                    if(delete_request.status == 200){
+                        function onloadEvent2()
+                        {
+                            var theData = JSON.parse(messages_request.responseText);
+                            if(messages_request.status == 200){
+                                var table = document.getElementById("messageTable")
+                                table.innerHTML=""
+                                for(let i=0; i < theData.length; i++){
+                                        var newRow = document.createElement('tr');
+                                        var usernameCell= document.createElement('th');
+                                        usernameCell.textContent = theData[i].username
+                                        newRow.appendChild(usernameCell)
+                                        var messageCell = document.createElement('th')
+                                        messageCell.textContent = theData[i].message;
+                                        newRow.appendChild(messageCell)
+                                        table.appendChild(newRow)
+                                        if(theData[i].id > last_message_id){
+                                            last_message_id = theData[i].id
+                                        }
+                                    }
+                            }
+
+                        }
+                    var messages_request = new XMLHttpRequest()
+                    messages_request.addEventListener("load",onloadEvent2)
+                    messages_request.open('GET','/api/messages')
+                    messages_request.withCredentials = true;
+                    messages_request.send()
+                    }
+                }
+
+                var delete_request = new XMLHttpRequest()
+                delete_request.addEventListener("load",onloadEvent)
+                delete_request.open('DELETE','/api/messages/'+username)
+                delete_request.withCredentials = true;
+                delete_request.send()
+            }
+        </script>
+    </head>
+    <body onload = "check_login()">
+        <h1>Discordn't Chat App</h1>
+        <div id="mainContent">
+        </div>
+    </body>
+</html>
