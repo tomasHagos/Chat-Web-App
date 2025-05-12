@@ -2,7 +2,7 @@
 
 
 ## PORT numbers:
-I harded coded the port numbers since I found it to be easier that way. These ports numbers are assigned to me.
+I harded coded the port numbers.
 
 ## First Step: Run the chat_server.py file
 For terminal clients: uses port 8305
