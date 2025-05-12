@@ -43,11 +43,6 @@ It prints the responses it gets
 ## favicon.oc file
 I used an open source image that I got from the internet as the favicon. I have attached the file.
 
-# Files folders
-
-I also attached the files folder. It contains all the files(images,html,..)
-
-
 # Others
 I made the servers to print certain informations to the console to see what's going on behind the scenes.
 
