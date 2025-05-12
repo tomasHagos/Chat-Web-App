@@ -59,8 +59,5 @@ This web app can be simulated on localhost.
 # Browser
 Use google chrome. Safari has some issues with the cookies(to be fixed soon). 
 
-# Pull Requests
-Feel free to make pull requests
-
 # Note
 The socket only takes in 1024 bytes per call. This may crash if a large message is sent. This will be fixed soon.
