@@ -38,7 +38,7 @@ Run: make
 
 ./screen_scrapper HOST(of the webserver) 8307 username message 
 
-It prints the responses it gets. Also, it uses assert as specified. 
+It prints the responses it gets
 
 ## favicon.oc file
 I used an open source image that I got from the internet as the favicon. I have attached the file.
